@@ -74,4 +74,16 @@ export class UserController {
             }
         })
     }
+
+    loginUser = async (req: Request, res: Response) => {
+        const { email, password } = req.body;
+
+        this.userService.login(email, password)
+        .then((data) => res.status(201).json(data))
+        .catch((error: any) =>{
+           return{ 
+            message: error
+        }
+        });
+    }
 };

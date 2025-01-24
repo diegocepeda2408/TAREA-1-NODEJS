@@ -1,4 +1,6 @@
-import { Users } from "../../data";
+import { bcryptAdapter } from "../../config/bcrypt.adapter";
+import { JwtAdapter } from "../../config/jwt.adapter";
+import { Users, UserStatus } from "../../data";
 import { CreateUserDTO, CustomError } from "../../domain";
 
 export class UserService {
@@ -16,7 +18,12 @@ export class UserService {
         try{
             const newUser = await user.save()
 
-            return newUser
+            return {
+                id: newUser.id,
+                name: newUser.name,
+                email: newUser.email,
+                role: newUser.role
+            }
         } catch (error) {
             throw CustomError.internalServer("Error creating the post!");
         }
@@ -26,7 +33,7 @@ export class UserService {
         try{
             const users = await Users.find({
                 where:{
-                    status: "available",
+                    status: UserStatus.AVAILABLE,
                 }
             })
 
@@ -41,7 +48,7 @@ export class UserService {
         const user = await Users.findOne({
             where:{
                 id,
-                status: "available",
+                status: UserStatus.AVAILABLE,
             }
         })       
 
@@ -68,7 +75,7 @@ export class UserService {
     async disableUser (id: string) {
         const user = await this.findOneUser(id);
 
-        user.status = "disabled";
+        user.status = UserStatus.DISABLED;
 
         if (!user) throw CustomError.notFound("User not found!")
 
@@ -76,6 +83,41 @@ export class UserService {
             return user.save();
         } catch (error) {
             throw CustomError.internalServer("Error from desabling the user!")
+        }
+    }
+
+    async findUserByEmail(email: string) {
+        const user = await Users.findOne({
+            where:{
+                email,
+                status: UserStatus.AVAILABLE
+            }
+        })
+
+        if (!user) throw CustomError.notFound("User not found!")
+
+        return user;
+    }
+
+    async login (email: string, password: string) {
+        const user = await this.findUserByEmail(email);
+
+        const isMatching = bcryptAdapter.compare(password, user.password);
+
+        if(!isMatching) throw CustomError.unAuthorized("Invalid Credentials!")
+
+        const token = await JwtAdapter.generateToken({id: user.id});
+
+        if (!token) throw CustomError.internalServer("Error from getting token!")
+
+        return {
+            token,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
         }
     }
 }

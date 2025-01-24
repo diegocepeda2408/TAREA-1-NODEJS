@@ -10,13 +10,13 @@ export class RepairsController {
     createRepair = async (req:Request, res:Response) => {
         const [ error, createRepairDto] = CreateAppointementDTO.create(req.body);
 
-        if(error) return res.status(422).json({ message: error})
+        if(error) return res.status(422).json({ errors: error})
 
         this.repairService.createRepair(createRepairDto!)
         .then((data: any) => res.status(201).json(data))
-        .catch((error: unknown) => {
+        .catch((error: any) => {
             return {
-                message: error
+                errors: error
             }
         })
     }

@@ -7,5 +7,7 @@ export const envs = {
     DB_USERNAME : get('USERNAME_DATABASE').required().asString(),
     DB_PASSWORD : get('PASSWORD_DATABASE').required().asString(),
     DB_DATABASE : get('DATABASE').required().asString(),
-    DB_PORT : get('PORT_DATABASE').required().asPortNumber() 
+    DB_PORT : get('PORT_DATABASE').required().asPortNumber(),
+    JWT_SECRET: get("JWT_SECRET").required().asString(),
+    JWT_EXPIRES_IN: get("JWT_EXPIRES_IN").required().asString()
 }
