@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 import { RepairsService } from "../services/repairs.service";
-import { CreateAppointementDTO } from "../../domain";
+import { CreateAppointementDTO, CustomError } from "../../domain";
 
 export class RepairsController {
     constructor (
@@ -26,7 +26,7 @@ export class RepairsController {
         .then((data) => res.status(200).json(data))
         .catch((error) => {
             return{
-                message: error
+                message: CustomError.badRequest(error)
             }
         })
     };

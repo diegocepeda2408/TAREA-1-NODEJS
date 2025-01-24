@@ -61,7 +61,7 @@ export class UserService {
         const user = await this.findOneUser(id);
 
         user.name = userData.name.trim();
-        user.email = userData.name.trim();
+        user.email = userData.email.trim();
 
         if (!user) throw CustomError.notFound("User not found!")
 

@@ -16,10 +16,6 @@ export class RepairsRoutes {
         router.use(AuthMiddleware.protect);
 
         router.post('/', repairsController.createRepair);
-        
-
-        router.use(AuthMiddleware.restrictTo(UserRole.EMPLOYEE));
-        
         router.get('/', repairsController.findAllRepairs);
         router.get('/:id', repairsController.findOneRepair);
         router.patch('/:id', repairsController.updateRepair)

@@ -41,17 +41,12 @@ export class RepairsService {
     }
 
     async findAllRepair () {
-        try{
-            const findAllRepair = await Repairs.find({
-                where: {
-                    status: In(["PENDING","COMPLETED"]),
-                }
-            })
+
+            const findAllRepair = await Repairs.find()
+
+            if (!findAllRepair) throw CustomError.badRequest("Try again!")
 
             return findAllRepair;
-        } catch (error){
-            throw CustomError.badRequest("There was an error while plotting the repairs list!")
-        }
     }
 
     async findOneRepair(id: string) {
@@ -71,7 +66,7 @@ export class RepairsService {
     async updateRepair (id: string) {
         const repair = await this.findOneRepair(id);
 
-        repair.status = RepairStatus.PENDING;
+        repair.status = RepairStatus.COMPLETED;
 
         try {
             const updatedRepair = await repair.save();
