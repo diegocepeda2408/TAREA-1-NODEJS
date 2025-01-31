@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Users } from "./user.model";
 
 export enum RepairStatus{
     PENDING = "PENDING",
@@ -37,4 +38,7 @@ export class Repairs extends BaseEntity{
         default: RepairStatus.PENDING
     })
     status: RepairStatus;
+
+    @ManyToOne(() => Users, (user) => user.repairs)
+    user: Users
 }

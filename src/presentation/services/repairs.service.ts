@@ -42,7 +42,14 @@ export class RepairsService {
 
     async findAllRepair () {
 
-            const findAllRepair = await Repairs.find()
+            const findAllRepair = await Repairs.find({
+                where: {
+                    status: In([RepairStatus.PENDING, RepairStatus.COMPLETED])
+                },
+                relations: {
+                    user: true
+                }
+            })
 
             if (!findAllRepair) throw CustomError.badRequest("Try again!")
 

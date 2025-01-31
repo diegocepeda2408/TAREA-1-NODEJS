@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import { CreateUserDTO, UpdateUserDTO } from "../../domain";
 import { UserService } from "../services/user.service";
+import { protectAccountOwner } from "../../config/validate.owner";
 
 export class UserController {
     constructor (
@@ -65,6 +66,11 @@ export class UserController {
 
     disableUser = async (req: Request, res: Response) => {
         const { id } = req.params;
+        const sessionUserId = req.body.sessionUserId.id; 
+
+        if (!protectAccountOwner(id, sessionUserId)) {
+            res.status(401).json({ message : "You are not the owner of this account!"})
+        };
 
         this.userService.disableUser(id)
         .then((data) => res.status(201).json(data))
